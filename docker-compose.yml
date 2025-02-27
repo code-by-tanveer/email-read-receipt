@@ -5,23 +5,24 @@ services:
     build: .
     ports:
       - "5000:5000"
-    environment:
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@db/email_db
     depends_on:
       - db
+    env_file: .env
+    volumes:
+      - .:/app
+    command: gunicorn --bind 0.0.0.0:5000 run:app
 
   db:
-    image: mysql:8.0
+    image: postgres:15
     restart: always
     environment:
-      MYSQL_DATABASE: email_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: rootpassword
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: email_tracker
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  db_data:
+  postgres_data:
